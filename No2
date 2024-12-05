@@ -1,0 +1,152 @@
+2.魔法能量场
+背景
+在我们的新款魔法主题⼿游"奇幻法师塔"中，玩家需要在不同位置建造能量塔来创造魔法能量场。游
+戏地图是⼀个⻓条形的区域，玩家可以在不同位置建造不同⾼度的能量塔。
+任务
+作为游戏开发团队的⼀员，你需要设计⼀个算法来帮助玩家找出最佳的能量塔建造位置。两座能量塔
+之间会形成⼀个梯形能量场，能量场的强度取决于两座塔的⾼度和它们之间的距离。
+要求
+1. 实现 MaxEnergyField ⽅法，该⽅法接收⼀个参数：
+◦ heights :⼀个整数数组，表⽰在每个位置能建造的能量塔的最⼤⾼度
+2. ⽅法应返回⼀个浮点数，表⽰能创造的最⼤魔法能量场强度（即两座塔与x轴构成的最⼤梯形⾯
+积）
+3. 编写单元测试来验证你的实现
+4. 分析你的算法的时间复杂度和空间复杂度
+
+解答：
+我的思路：类似leetcode11盛最多水，但是不同的是由于求梯形面积，不能同理使用双指针，所以不能让双指针去一起移动。
+我二分成两种方案：先移动左/右指针。
+具体：左右指针分别位于最左最右端。
+一、固定左指针，只移动右指针，找能形成最大面积的右指针。 之后将这个指针固定，再去移动左指针，找能形成最大面积的左指针。
+二、（相反，上次我们先固定左）固定右指针，进行相反的操作。
+将两次的最大面积相互比较得出最大面积。
+代码：
+using System;
+
+public class EnergyFieldSystem
+{
+    public static float MaxEnergyField(int[] heights)
+    {
+        if (heights == null || heights.Length < 2)
+        {
+            return 0.0f;
+        }
+
+        int n = heights.Length;
+        float maxEnergy = 0.0f;
+        int left = 0;
+        int right = n - 1;     
+        float originS = (heights[left] + heights[right]) * (right - left);
+        maxEnergy=Math.Max(maxEnergy, originS);
+        //固定左边
+        for (int i = right; i > left; i--)
+        {
+            float currS = (heights[left] + heights[i]) * (i - left);
+            if (currS >= originS)
+            { 
+                right = i;
+                originS = currS;
+            }
+        }
+        //找左边
+        for (int i = left; i < right; i++)
+        {
+            float currS = (heights[right] + heights[i]) * (right - i);
+            if (currS >= originS)
+            {
+                left = i;
+                originS = currS;
+            }
+        }
+        maxEnergy = Math.Max(maxEnergy, originS);
+        //刷新数据，固定右边
+        left = 0;
+        right = n - 1;
+        originS = (heights[left] + heights[right]) * (right - left);
+        for (int i = left; i <right; i++)
+        {
+            float currS = (heights[right] + heights[i]) * (right - i);
+            if (currS >= originS)
+            {
+                left = i;
+                originS = currS;
+            }
+        }
+        //找右边
+        for (int i = right; i >left; i--)
+        {
+            float currS = (heights[left] + heights[i]) * (i - left);
+            if (currS >= originS)
+            {
+                right = i;
+                originS = currS;
+            }
+        }
+        maxEnergy = Math.Max(maxEnergy, originS);
+
+        return maxEnergy/2.0f;
+    }
+    static void Main()
+    {
+        Console.WriteLine(MaxEnergyField(new int[] { 1, 8, 6, 2, 5, 4, 8, 3, 7 }));
+    }
+}
+*时间复杂度O（n）
+*空间复杂度O（1）常数级
+#测试代码：
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Tests
+{
+    [TestClass()]
+    
+    public class EnergyFieldSystemTests
+    {
+        [TestMethod]
+        public void TestMaxEnergyField()
+        {
+            Assert.AreEqual(52.5, EnergyFieldSystem.MaxEnergyField(new int[] { 1, 8, 6, 2, 5, 4, 8, 3, 7 }));
+        }
+        [TestMethod]
+        public void TestMaxEnergyField_WithNullInput_ReturnsZero()
+        {
+            Assert.AreEqual(0, EnergyFieldSystem.MaxEnergyField(null));
+        }
+
+        [TestMethod]
+        public void TestMaxEnergyField_WithEmptyArray_ReturnsZero()
+        {
+            Assert.AreEqual(0, EnergyFieldSystem.MaxEnergyField(new int[] { }));
+        }
+
+        [TestMethod]
+        public void TestMaxEnergyField_WithSingleElement_ReturnsZero()
+        {
+            Assert.AreEqual(0, EnergyFieldSystem.MaxEnergyField(new int[] { 10 }));
+        }
+
+        [TestMethod]
+        public void TestMaxEnergyField_WithTwoElements_ReturnsCorrectResult()
+        {
+            Assert.AreEqual(5, EnergyFieldSystem.MaxEnergyField(new int[] { 3, 7 }));
+        }
+
+        [TestMethod]
+        public void TestMaxEnergyField_WithAllElementsSameHeight_ReturnsCorrectResult()
+        {
+            Assert.AreEqual(20, EnergyFieldSystem.MaxEnergyField(new int[] { 5, 5, 5, 5, 5 }));
+        }
+
+        [TestMethod]
+        public void TestMaxEnergyField_WithLargeArray_ReturnsCorrectResult()
+        {
+            Assert.AreEqual(10004*3/2.0f, EnergyFieldSystem.MaxEnergyField(new int[] { 3 ,4 ,10000,1, 100, 4 }));
+        }
+    }
+}
+*测试全部通过，未发现反例。
