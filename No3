@@ -24,33 +24,47 @@ dp数组初始化
 dp[0]：只有一个宝箱时，最大价值就是该宝箱的价值，即 dp[0] = treasures[0]。
 dp[1]：有两个宝箱时，最大价值是两个宝箱中价值较大的那个，即 dp[1] = Math.Max(treasures[0], treasures[1])。
 
+注：这里进行了优化，将dp一维压缩为两个变量， pre，aft代表dp[i-2],dp[i-1]
 代码：
 using System;
 public class TreasureHuntSystem
 {
     public static int MaxTreasureValue(int[] treasures)
+{
+    if (treasures == null || treasures.Length == 0)
+        return 0;
+    if (treasures.Length == 1)
+        return treasures[0];
+    if (treasures.Length == 2)
+        return Math.Max(treasures[0], treasures[1]);
+
+    //int[] dp = new int[treasures.Length];
+    int pre= treasures[0];
+    int aft = Math.Max(treasures[0], treasures[1]);
+
+    for (int i = 2; i < treasures.Length; i++)
     {
-        if (treasures == null || treasures.Length == 0)
-            return 0;
-        if (treasures.Length == 1)
-            return treasures[0];
-        if (treasures.Length == 2)
-            return Math.Max(treasures[0], treasures[1]);
-
-        int[] dp = new int[treasures.Length];
-        dp[0] = treasures[0];
-        dp[1] = Math.Max(treasures[0], treasures[1]);
-
-        for (int i = 2; i < treasures.Length; i++)
-        {
-            dp[i] = Math.Max(dp[i - 1], dp[i - 2] + treasures[i]);
-        }
-
-        return dp[treasures.Length - 1];
+        int t = Math.Max(aft, pre + treasures[i]);
+        pre = aft;
+        aft = t;
     }
+
+    return aft;
+}
     static void Main()
     {
         Console.WriteLine(MaxTreasureValue(new int[] { 4, 3, 2, 3 }));
     }
 }
+
 *时间复杂度：算法的时间复杂度是 O(n)
+*空间复杂度：由于进行了优化空间复杂度是O（1）常数级
+
+进阶挑战（可选）
+1. 如果我们允许玩家使⽤⼀次"魔法钥匙"，可以安全地打开任意两个相邻的宝箱⽽不触发陷阱，你会
+如何修改你的算法？
+2. 在游戏的⾼级关卡中，有些宝箱可能包含负值（表⽰陷阱会扣除玩家的分数）。你的算法如何处理
+这种情况？
+创意思考（可选）
+这个机制可能会在游戏中带来哪些有趣的策略选择？你能想到如何将这个概念扩展到⼀个完整的游戏
+关卡设计中吗？
