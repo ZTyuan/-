@@ -1,0 +1,56 @@
+3.魔法宝箱探险背景
+在我们即将推出的奇幻冒险⼿游“魔法宝藏”中，玩家将探索⼀个充满神秘宝箱的古代遗迹。这些宝
+箱排列在⼀条直线上，每个宝箱⾥都藏有不同价值的魔法宝物。
+任务
+你需要设计⼀个算法来帮助玩家在游戏中做出最优选择。然⽽，这些宝箱被施加了⼀个奇特的魔法诅
+咒：如果打开了相邻的两个宝箱，就会触发陷阱，导致玩家损失所有已收集的宝物！
+要求
+1. 实现 MaxTreasureValue ⽅法，该⽅法接收⼀个参数：
+◦ treasures :⼀个整数数组，表⽰每个宝箱中宝物的价值
+2. ⽅法应返回⼀个整数，表⽰在不触发陷阱的情况下，玩家能够获得的最⼤宝物总价值
+3. 编写单元测试来验证你的实现
+4. 分析你的算法的时间复杂度和空间复杂度
+
+解答：
+使用动态规划：定义 dp[i] 为到达第 i 个宝箱时，玩家能够获得的最大宝物总价值。
+
+对于每个宝箱 i（从第三个宝箱开始，即索引为 2），玩家有两个选择：
+打开当前宝箱，然后跳过下一个宝箱（因为不能打开相邻的宝箱），所以总价值将是 dp[i-2] + treasures[i]。
+不打开当前宝箱，直接考虑下一个宝箱，总价值将是 dp[i-1]。
+因此，状态转移方程为：
+dp[i] = Math.Max(dp[i-1], dp[i-2] + treasures[i])
+
+dp数组初始化
+dp[0]：只有一个宝箱时，最大价值就是该宝箱的价值，即 dp[0] = treasures[0]。
+dp[1]：有两个宝箱时，最大价值是两个宝箱中价值较大的那个，即 dp[1] = Math.Max(treasures[0], treasures[1])。
+
+代码：
+using System;
+public class TreasureHuntSystem
+{
+    public static int MaxTreasureValue(int[] treasures)
+    {
+        if (treasures == null || treasures.Length == 0)
+            return 0;
+        if (treasures.Length == 1)
+            return treasures[0];
+        if (treasures.Length == 2)
+            return Math.Max(treasures[0], treasures[1]);
+
+        int[] dp = new int[treasures.Length];
+        dp[0] = treasures[0];
+        dp[1] = Math.Max(treasures[0], treasures[1]);
+
+        for (int i = 2; i < treasures.Length; i++)
+        {
+            dp[i] = Math.Max(dp[i - 1], dp[i - 2] + treasures[i]);
+        }
+
+        return dp[treasures.Length - 1];
+    }
+    static void Main()
+    {
+        Console.WriteLine(MaxTreasureValue(new int[] { 4, 3, 2, 3 }));
+    }
+}
+*时间复杂度：算法的时间复杂度是 O(n)
