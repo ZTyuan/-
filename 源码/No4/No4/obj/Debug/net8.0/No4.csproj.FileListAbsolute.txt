@@ -1,0 +1,14 @@
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\No4.GeneratedMSBuildEditorConfig.editorconfig
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\No4.AssemblyInfoInputs.cache
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\No4.AssemblyInfo.cs
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\No4.csproj.CoreCompileInputs.cache
+D:\codes\code\codes\源码\No4\No4\bin\Debug\net8.0\No4.exe
+D:\codes\code\codes\源码\No4\No4\bin\Debug\net8.0\No4.deps.json
+D:\codes\code\codes\源码\No4\No4\bin\Debug\net8.0\No4.runtimeconfig.json
+D:\codes\code\codes\源码\No4\No4\bin\Debug\net8.0\No4.dll
+D:\codes\code\codes\源码\No4\No4\bin\Debug\net8.0\No4.pdb
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\No4.dll
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\refint\No4.dll
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\No4.pdb
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\No4.genruntimeconfig.cache
+D:\codes\code\codes\源码\No4\No4\obj\Debug\net8.0\ref\No4.dll
