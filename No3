@@ -63,8 +63,104 @@ public class TreasureHuntSystem
 进阶挑战（可选）
 1. 如果我们允许玩家使⽤⼀次"魔法钥匙"，可以安全地打开任意两个相邻的宝箱⽽不触发陷阱，你会
 如何修改你的算法？
+
 2. 在游戏的⾼级关卡中，有些宝箱可能包含负值（表⽰陷阱会扣除玩家的分数）。你的算法如何处理
 这种情况？
-创意思考（可选）
-这个机制可能会在游戏中带来哪些有趣的策略选择？你能想到如何将这个概念扩展到⼀个完整的游戏
-关卡设计中吗？
+
+解答：
+状态定义
+我们定义 dp[i][0] 为到达第 i 个宝箱时，玩家不使用魔法钥匙能够获得的最大宝物总价值。dp[i][1] 为到达第 i 个宝箱时，玩家已经使用过魔法钥匙能够获得的最大宝物总价值。
+
+状态转移方程
+对于每个宝箱 i（从第三个宝箱开始，即索引为 2），我们有以下几种情况：
+
+不使用魔法钥匙，不打开当前宝箱：dp[i][0] = dp[i-1][0]
+不使用魔法钥匙，打开当前宝箱：dp[i][0] = Math.Max(dp[i][0], dp[i-2][0] + treasures[i])
+使用魔法钥匙，打开当前宝箱和前一个宝箱：dp[i][1] = Math.Max(dp[i-1][1], dp[i-2][0] + treasures[i-1] + treasures[i]) （注意这里 dp[i-2][0] 是因为在使用魔法钥匙之前，我们不能打开第 i-1 个宝箱）
+因此，状态转移方程为：
+
+dp[i][0] = Math.Max(dp[i-1][0], dp[i-2][0] + treasures[i])
+dp[i][1] = Math.Max(dp[i-1][1], dp[i-2][0] + treasures[i-1] + treasures[i])
+
+初始化
+dp[0][0] = treasures[0]
+dp[0][1] = treasures[0] （即使使用了魔法钥匙，但在第一个宝箱时没有效果）
+dp[1][0] = Math.Max(Math.Max(treasures[0], treasures[1]),0);//选一个或者都不选
+dp[1][1] = Math.Max(treasures[0] + treasures[1], dp[1][0]);//选一个或者都不选或者都选
+
+进阶的代码：
+using System;
+
+public class TreasureHuntSystem
+{
+    public static int MaxTreasureValue(int[] treasures)
+    {
+        if (treasures == null || treasures.Length == 0)
+            return 0;
+
+        int n = treasures.Length;
+        if (n == 1)
+            return treasures[0];
+
+        // dp[i, 0] 表示不使用魔法钥匙到达第i个宝箱的最大价值
+        // dp[i, 1] 表示使用魔法钥匙到达第i个宝箱的最大价值
+        int[,] dp = new int[n, 2];
+
+        // 初始化
+        dp[0, 0] = Math.Max(treasures[0],0);
+        dp[0, 1] = Math.Max(treasures[0],0);
+        dp[1, 0] = Math.Max(Math.Max(treasures[0], treasures[1]),0);//选一个或者都不选
+        dp[1, 1] = Math.Max(treasures[0] + treasures[1], dp[1,0]);
+
+        // 动态规划填表
+        for (int i = 2; i < n; i++)
+        {
+            dp[i, 0] = Math.Max(dp[i - 1, 0], dp[i - 2, 0] + treasures[i]);
+            dp[i, 1] = Math.Max(dp[i - 1, 1], dp[i - 2, 0] + treasures[i - 1] + treasures[i]);
+        }
+
+        // 返回最大值
+        return Math.Max(dp[n - 1, 0], dp[n - 1, 1]);
+    }
+    static void Main()
+    {
+        // 测试使用魔法钥匙的情况
+        Console.WriteLine(MaxTreasureValue(new int[] { 2, 7, 9, 3, 1 })); 
+        // 测试包含负值宝箱的情况
+        Console.WriteLine(MaxTreasureValue(new int[] { 3, -1, -1, -2, 4 })); 
+    }
+}
+进阶的测试代码：
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Tests
+{
+    [TestClass()]
+    public class TreasureHuntSystemTests
+    {
+        [TestMethod()]
+        public void MaxTreasureValueTest()
+        {
+            // 测试空数组
+            Assert.AreEqual(0, TreasureHuntSystem.MaxTreasureValue(null));
+            // 测试只有一个宝箱的情况
+            Assert.AreEqual(3, TreasureHuntSystem.MaxTreasureValue(new int[] { 3 }));
+            // 测试示例
+            Assert.AreEqual(14, TreasureHuntSystem.MaxTreasureValue(new int[] { 3, 1, 5, 2, 4 }));
+            // 测试两个宝箱的情况
+            Assert.AreEqual(8, TreasureHuntSystem.MaxTreasureValue(new int[] { 3, 5 }));
+            // 测试更多宝箱的情况
+            Assert.AreEqual(19, TreasureHuntSystem.MaxTreasureValue(new int[] { 2, 7, 9, 3, 1 }));
+            Assert.AreEqual(12, TreasureHuntSystem.MaxTreasureValue(new int[] { 3, -1, 5, -2, 4 }));
+            Assert.AreEqual(7, TreasureHuntSystem.MaxTreasureValue(new int[] { 3, -1, -1, -2, 4 }));
+            Assert.AreEqual(0, TreasureHuntSystem.MaxTreasureValue(new int[] { -1, -2, -3 }));
+        }
+    }
+}
+
+
