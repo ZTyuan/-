@@ -1,0 +1,14 @@
+D:\codes\code\codes\No3进阶\No3进阶\bin\Debug\net8.0\No3进阶.exe
+D:\codes\code\codes\No3进阶\No3进阶\bin\Debug\net8.0\No3进阶.deps.json
+D:\codes\code\codes\No3进阶\No3进阶\bin\Debug\net8.0\No3进阶.runtimeconfig.json
+D:\codes\code\codes\No3进阶\No3进阶\bin\Debug\net8.0\No3进阶.dll
+D:\codes\code\codes\No3进阶\No3进阶\bin\Debug\net8.0\No3进阶.pdb
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\No3进阶.GeneratedMSBuildEditorConfig.editorconfig
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\No3进阶.AssemblyInfoInputs.cache
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\No3进阶.AssemblyInfo.cs
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\No3进阶.csproj.CoreCompileInputs.cache
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\No3进阶.dll
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\refint\No3进阶.dll
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\No3进阶.pdb
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\No3进阶.genruntimeconfig.cache
+D:\codes\code\codes\No3进阶\No3进阶\obj\Debug\net8.0\ref\No3进阶.dll
