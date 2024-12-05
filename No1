@@ -1,0 +1,162 @@
+1.休闲游戏排⾏榜
+背景
+在我们最新推出的休闲⼿机游戏“星际泡泡⻰”中，玩家们通过消除彩⾊泡泡来获得分数。游戏结束
+后，我们需要展⽰⼀个实时更新的排⾏榜，显⽰得分最⾼的玩家。
+任务
+你需要实现⼀个函数来处理排⾏榜数据。这个函数应该能从所有玩家的分数中筛选出前m名⾼分玩家
+的分数。
+要求
+1. 实现 GetTopScores ⽅法，该⽅法接收两个参数：
+◦ scores :⼀个整数数组，表⽰所有玩家的分数（分数是不重复的正整数）
+◦ m :⼀个整数，表⽰我们想要获取的前⼏名玩家的数量
+2. ⽅法应返回⼀个列表，包含前m个最⾼分数，按从⾼到低排序
+3. 考虑各种边界情况，例如空数组、m⼤于数组⻓度等
+4. 编写单元测试来验证你的实现
+5. 分析你的算法的时间复杂度
+进阶思考（可选）
+如果我们的游戏变得⾮常受欢迎，玩家数量达到了数百万，你会如何优化这个算法以处理⼤规模数
+据？
+
+解答：这里考虑“进阶思考”，玩家数量达到了数百时我们可以用堆排序来处理。这里用小根堆实现。
+```csharp
+using System;
+using System.Collections.Generic;
+
+public class LeaderboardSystem
+{
+    public static List<int> GetTopScores(int[] scores, int m)
+    {
+        if(m==0)return new List<int>();
+        if (scores == null) return new List<int>();
+        // 使用最小堆来维护前m个最高分
+        var minHeap = new MinHeap(m);
+
+        foreach (var score in scores)
+        {
+            minHeap.Add(score);
+        }
+
+        // 返回堆中的元素，它们是降序排列的
+        return minHeap.GetSortedScores();
+    }
+    static void Main()
+    {
+        Console.ReadKey();
+        //List<int> t=GetTopScores(null, 5);调试用
+        Console.WriteLine("Fin");
+    }
+}
+//自定义小根堆
+public class MinHeap
+{
+    private List<int> heap;
+
+    public MinHeap(int capacity)
+    {
+        heap = new List<int>(capacity);
+    }
+    public int Count()
+    { 
+        return heap.Count;
+    }
+    public void Add(int score)
+    {
+        if (heap.Count < heap.Capacity)
+        {//正常小根堆插入新元素 从尾
+            heap.Add(score);
+            HeapifyUp(heap.Count - 1);
+        }
+        else if (score > heap[0])
+        {//类似删除元素
+            heap[0] = score;
+            HeapifyDown(0);
+        }
+    }
+
+    private void HeapifyUp(int index)
+    {
+        while (index > 0)
+        {
+            int parentIndex = (index - 1) / 2;
+            if (heap[index] >= heap[parentIndex])
+            {
+                break;
+            }
+            Swap(index, parentIndex);
+            index = parentIndex;
+        }
+    }
+
+    private void HeapifyDown(int index)
+    {
+        int childIndex;
+        while ((childIndex = 2 * index + 1) < heap.Count)
+        {
+            if (childIndex + 1 < heap.Count && heap[childIndex + 1] < heap[childIndex])
+            {
+                childIndex++;
+            }
+            if (heap[index] <= heap[childIndex])
+            {
+                break;
+            }
+            Swap(index, childIndex);
+            index = childIndex;
+        }
+    }
+
+    private void Swap(int i, int j)
+    {
+        int temp = heap[i];
+        heap[i] = heap[j];
+        heap[j] = temp;
+    }
+
+    public List<int> GetSortedScores()
+    {
+        var sortedScores = new List<int>(heap.Count);
+        while (heap.Count > 0)
+        {
+            sortedScores.Add(heap[0]);
+            heap[0] = heap[heap.Count - 1];
+            heap.RemoveAt(heap.Count - 1);
+            HeapifyDown(0);
+        }
+        sortedScores.Reverse(); // 反转以获得降序
+        return sortedScores;
+    }
+   
+}
+* 时间复杂度: Add（）方法中不管是HeapifyUp还是HeapifyDown，复杂度是O（logm）。设数组大小为n，通常情况下n>>m,整体复杂度为O（nlogm）;
+#以下是单元测试代码
+```csharp
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Tests
+{
+    [TestClass()]
+    public class LeaderboardSystemTests
+    {
+        [TestMethod()]
+        public void TestGetTopScores()
+        {
+            // 测试正常情况
+            CollectionAssert.AreEqual(new List<int> { 5, 4, 3 }, LeaderboardSystem.GetTopScores(new int[] { 1, 2, 3, 4, 5 }, 3));
+            CollectionAssert.AreEqual(new List<int> { 50, 40 }, LeaderboardSystem.GetTopScores(new int[] { 10, 20, 30, 40, 50 }, 2));
+
+            // 测试边界情况
+            CollectionAssert.AreEqual(new List<int>(), LeaderboardSystem.GetTopScores(new int[] { }, 5));
+            CollectionAssert.AreEqual(new List<int> { 3, 2, 1 }, LeaderboardSystem.GetTopScores(new int[] { 1, 2, 3 }, 5));
+            CollectionAssert.AreEqual(new List<int> { 5 }, LeaderboardSystem.GetTopScores(new int[] { 5 }, 1));
+            CollectionAssert.AreEqual(new List<int>(), LeaderboardSystem.GetTopScores(new int[] { 1, 2, 3 }, 0));
+            CollectionAssert.AreEqual(new List<int>(), LeaderboardSystem.GetTopScores(null, 5));
+        }
+    
+    }
+}
+*经过测试，全部通过。
